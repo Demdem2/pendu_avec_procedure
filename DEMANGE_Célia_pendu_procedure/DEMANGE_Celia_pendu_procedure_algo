@@ -1,0 +1,244 @@
+Pendu
+//BUT: Deviner le mot caché
+//ENTREE: Une lettre
+//SORTIE: Dessin du pendu ou le mot caché
+
+//Toutes les Procédures:
+
+
+/**************************************************
+BUT: Dessiner le pendu lorsqu'on perd une vie
+
+ENTREE: le nombre de vie
+
+SORTIE: l'avancé du dessin du pendu
+**************************************************/
+
+PROCEDURE dessin_pendu (VAR: n_vie :ENTIER):ENTIER
+
+DEBUT
+	CAS n_vie PARMI
+
+	CAS 9:  //Le joueur a 9 vies
+		ECRIRE "_|__ \n"
+	CAS 8:  //Le joueur a 8 vies, etc.
+		ECRIRE " | \n"
+		ECRIRE "_|__ \n"
+	CAS 7:
+		ECRIRE " | \n"
+		ECRIRE " | \n"
+		ECRIRE "_|__ \n"
+	CAS 6:
+		ECRIRE " | \n"
+		ECRIRE " | \n"
+		ECRIRE " | \n"
+		ECRIRE "_|__ \n"
+	CAS 5:
+		ECRIRE " | \n"
+		ECRIRE " | \n"
+		ECRIRE " | \n"
+		ECRIRE " | \n"
+		ECRIRE "_|__ \n"
+	CAS 4:
+		ECRIRE "____________ \n"
+		ECRIRE " | \n"
+		ECRIRE " | \n"
+		ECRIRE " | \n"
+		ECRIRE " | \n"
+		ECRIRE "_|__ \n"
+	CAS 3:
+		ECRIRE "____________ \n"
+		ECRIRE " |        |\n"
+		ECRIRE " | \n"
+		ECRIRE " | \n"
+		ECRIRE " | \n"
+		ECRIRE "_|__ \n"
+	CAS 2:
+		ECRIRE "____________ \n"
+		ECRIRE " |        |\n"
+		ECRIRE " |        O\n"
+		ECRIRE " | \n"
+		ECRIRE " | \n"
+		ECRIRE "_|__ \n"
+	CAS 1:
+		ECRIRE "____________ \n"
+		ECRIRE " |        |\n"
+		ECRIRE " |        O\n"
+		ECRIRE " |       /|\ \n"
+		ECRIRE " | \n"
+		ECRIRE "_|__ \n"
+	PARDEFAUT:
+		ECRIRE "\n"
+
+	FINCASPARMI
+FINPROCEDURE
+
+
+
+/*********************************************************
+BUT: Exprimer la victoire ou la défaite du joueur
+
+ENTREE: le nombre de vie
+
+SORTIE: afficher la victoire ou la défaite aux joueurs
+*********************************************************/
+
+PROCEDURE condition_victoire (VAR: n_vie, n_win :ENTIER) :ENTIER
+
+DEBUT
+	SI (n_vie=0) ALORS //Si le joueur n'a plus de vies, donc si la condition n'est plus vraie, on affiche la suite, à savoir la potence complète, accompagnée d'un message de Game Over
+
+		ECRIRE "____________ \n"
+		ECRIRE " |        |\n"
+		ECRIRE " |        O\n"
+		ECRIRE " |       /|\ \n"
+		ECRIRE " |       / \ \n"
+		ECRIRE "_|__ \n"
+		ECRIRE "\n Vous avez perdu. Le mot a deviner etait:" + s_mot
+
+	SINON SI (n_win = 1) ALORS  //Sinon, ici on contredit l'autre condition en ayant la variable qui vaut 1...
+
+		ECRIRE "Le mot etait bien"+s_mot + "FELICITATIONS, vous avez gagné!"
+	FINSI
+FINPROCEDURE
+
+
+/*******************************************************
+BUT: Dire si la lettre insérée est la bonne
+
+ENTREE: une lettre
+
+SORTIE: bonne ou mauvaise lettre
+******************************************************/
+
+PROCEDURE bonne_ou_mauvaise_lettre (
+VAR: i,n_nbltr,n_trouve,n_mot: ENTIER
+	s_mot :CHAINE
+	c_ltrchoix :CARACTERE ):ENTIER
+
+DEBUT
+	POUR i DE 0 A n_nbltr PAS DE 1 FAIRE
+
+		SI (c_ltrchoix = s_mot[i]) ALORS //On teste si notre lettre entrée est présente dans la chaine de caractères
+
+
+			n_mot[i]<-1  	//Si oui, on affecte 1 à la position de la lettre...
+
+			n_trouve<-1  	//...et on affecte également 1 à la variable initialisée précédemment, pour dire que la lettre est la bonne
+
+		FINSI
+	FINPOUR
+
+	SI(n_trouve=0) ALORS 	//Si l'affectation n'est pas égale à 1, c'est donc faux
+
+		n_vie<- n_vie-1 	//Alors on enlève une vie au joueur
+
+	FINSI
+FINPROCEDURE
+
+
+
+/*****************************************************
+BUT: afficher la lettre
+
+ENTREE: /
+
+SORTIE: afficher la lettre au bon emplacement ou non
+*****************************************************/
+
+PROCEDURE affichage_lettre (VAR: 
+i, n_nbltr,n_mot,n_nbaffiche,n_win :ENTIER
+s_mot :CHAINE)
+
+DEBUT
+	POUR i DE 0 A n_nbltr PAS DE 1 FAIRE
+		SI (n_mot[i]=1) ALORS 	/Ici le 1 définit le "vrai" dans notre jeu. 1: On a trouvé le caractère, 0: On n'a pas trouvé le caractère.
+
+			ECRIRE s_mot[i] 	//On affiche la lettre trouvée à sa place
+
+			n_nbaffiche <- n_nbaffiche + 1 		//On incrémente pour chaque lettre trouvée cette variable
+
+		SINON
+
+			ECRIRE "_ "		//Autrement, si on n'a pas trouvé, on garde un vide, symbolisé par un tiret
+
+		FINSI
+	FINPOUR
+
+	SI(n_nbaffiche=n_nbltr) ALORS	 //Condition de victoire, si notre nombre de caractères affichés (et donc trouvés) est égal au nombre de caractères dans le mot
+
+		n_win<- 1 		//On sort de notre while
+
+	FINSI
+FINPROCEDURE
+
+
+//Debut du programme principal
+
+VAR:
+	n_mot: tableau [100]: ENTIER //Nombre max de lettres du mot
+
+	s_mot: tableau [100]: CHAINE //entrée par l'utilisateur, notre mot à deviner
+
+	c_ltrchoix :CHAINE //lettre que l'utilisateur va entrer pour deviner le mot
+
+	n_nbltr, n_vie, n_win, i,n_nbaffiche, n_trouve: ENTIER
+
+DEBUT //main
+
+//variables
+	n_nbltr <-0 //nombre de lettres dans le mot
+	n_vie <-10	//nombre de vies du joueur, initialisée à 10
+
+	n_win<-0 //la condition de victoire
+	i <-0
+
+//debut
+	POUR i DE 0 A 100 PAS E 1 FAIRE
+		n_mot[i] <-0
+	FINPOUR //Initialisation du tableau du mot, on met toutes les valeurs à 0 pour "faux"
+
+//Initialisation et instructions
+
+	ECRIRE "Veuillez entrer le mot a deviner, en majuscules \n"
+	LIRE s_mot
+
+	n_nbltre <- MODULE s_mot //On affecte une valeur à la variable de la longueur de notre mot à l'aide d'une commande qui va compter le nombre de caractères
+
+	system ("cls") //note: je ne trouve pas comment le traduire en algo désolé
+	//On efface l'écran pour que la personne devant deviner ne puisse pas voir la réponse
+
+//Jeu
+	TANTQUE (n_vie > 0 ET n_win <> 1) FAIRE
+
+		system ("cls") //On efface l'écran à chaque nouvelle répétition de la boucle
+
+		dessin_pendu(n_vie)
+
+		ECRIRE ("\n")
+		n_nbaffiche<-0
+
+		affichage_lettre(i, n_nbltr,n_mot,n_nbaffiche,n_win,s_mot)
+		//variable qui va se voir affecter le nombre de lettres trouvées
+
+		ECRIRE "Veuillez entrer une lettre majuscule: \n"
+		LIRE c_ltrchoix
+
+		n_trouve<-0 //variable qui permettra de dire si notre lettre est la bonne ou non
+
+		bonne_ou_mauvaise_lettre (i,n_nbltr,n_trouve,n_mot,s_mot,c_ltrchoix)
+	FINTANTQUE
+
+	system("cls")  ////On efface l'écran pour afficher un message de victoire ou de défaite
+
+	condition_victoire (n_vie, n_win)
+
+	system("pause>nul")
+
+FIN //main
+
+
+
+
+
+
